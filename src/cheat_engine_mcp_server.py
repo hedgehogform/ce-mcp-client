@@ -794,6 +794,20 @@ async def memscan(scan_option: str, var_type: str, input1: str = None, input2: s
     return await make_request("memscan", "POST", data)
 
 
+@mcp.tool()
+async def memscan_reset() -> Dict[str, Any]:
+    """
+    Reset the current memory scan to start a fresh scan
+    
+    This clears all previous scan results and allows you to start a new initial scan.
+    Use this when you want to begin a completely new scan workflow.
+    
+    Returns:
+        Dictionary with success status
+    """
+    return await make_request("memscan-reset", "POST")
+
+
 @mcp.tool() 
 async def get_api_info() -> Dict[str, Any]:
     """
