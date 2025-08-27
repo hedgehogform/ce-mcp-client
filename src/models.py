@@ -6,80 +6,78 @@ from typing import List, Optional, TypedDict, Union
 
 
 class BaseResponse(TypedDict):
-    success: bool
-    error: Optional[str]
+    Success: bool
+    Error: Optional[str]
 
 
 class LuaResponse(BaseResponse):
-    result: Optional[str]
-    returnCount: Optional[int]
-    executionTime: Optional[str]
+    Result: Optional[str]
 
 
 class ProcessInfo(TypedDict):
-    processId: int
-    processName: str
+    ProcessId: int
+    ProcessName: str
 
 
 class ProcessListResponse(BaseResponse):
-    processList: Optional[List[ProcessInfo]]
+    ProcessList: Optional[List[ProcessInfo]]
 
 
 class ProcessStatusResponse(BaseResponse):
-    processId: Optional[int]
-    isOpen: Optional[bool]
-    processName: Optional[str]
+    ProcessId: Optional[int]
+    IsOpen: Optional[bool]
+    ProcessName: Optional[str]
 
 
 class ThreadListResponse(BaseResponse):
-    threadList: Optional[List[str]]
+    ThreadList: Optional[List[str]]
 
 
 class MemoryReadResponse(BaseResponse):
-    value: Optional[Union[str, int, float, List[int]]]
+    Value: Optional[Union[str, int, float, List[int]]]
 
 
 class ConversionResponse(BaseResponse):
-    output: Optional[str]
+    Output: Optional[str]
 
 
 class AobScanResponse(BaseResponse):
-    addresses: Optional[List[str]]
+    Addresses: Optional[List[str]]
 
 
 class DisassemblerResponse(BaseResponse):
-    output: Optional[str]
+    Output: Optional[str]
 
 
 class ResultItem(TypedDict):
-    address: str
-    value: str
+    Address: str
+    Value: str
 
 
 class ResultList(TypedDict):
-    totalCount: int
-    storedCount: int
-    items: List[ResultItem]
+    TotalCount: int
+    StoredCount: int
+    Items: List[ResultItem]
 
 
 class MemScanResponse(BaseResponse):
-    results: Optional[ResultList]
+    Results: Optional[ResultList]
 
 
 class GetAddressSafeResponse(BaseResponse):
-    address: Optional[str]
+    Address: Optional[str]
 
 
 class GetNameFromAddressResponse(BaseResponse):
-    name: Optional[str]
+    Name: Optional[str]
 
 
 class InModuleResponse(BaseResponse):
-    inModule: Optional[bool]
+    InModule: Optional[bool]
 
 
 class InSystemModuleResponse(BaseResponse):
-    inSystemModule: Optional[bool]
+    InSystemModule: Optional[bool]
 
 
 class ApiInfoResponse(TypedDict):

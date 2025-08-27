@@ -39,6 +39,6 @@ async def make_request(endpoint: str, method: str = "GET", data: Dict[str, Any] 
             response.raise_for_status()
             return response.json()
         except httpx.RequestError as e:
-            return {"success": False, "error": f"Request failed: {e}"}
+            return {"Success": False, "Error": f"Request failed: {e}"}
         except httpx.HTTPStatusError as e:
-            return {"success": False, "error": f"HTTP error: {e.response.status_code}"}
+            return {"Success": False, "Error": f"HTTP error: {e.response.status_code}"}
