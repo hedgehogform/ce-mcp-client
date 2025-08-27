@@ -4,8 +4,8 @@ Address manipulation tools for Cheat Engine MCP
 
 from mcp.server.fastmcp import FastMCP
 
-from ..client import make_request
-from ..models import (
+from client import make_request
+from models import (
     GetAddressSafeResponse,
     GetNameFromAddressResponse,
     InModuleResponse,

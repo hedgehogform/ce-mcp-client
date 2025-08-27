@@ -12,6 +12,8 @@ class BaseResponse(TypedDict):
 
 class LuaResponse(BaseResponse):
     result: Optional[str]
+    returnCount: Optional[int]
+    executionTime: Optional[str]
 
 
 class ProcessInfo(TypedDict):

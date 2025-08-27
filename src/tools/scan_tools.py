@@ -5,8 +5,8 @@ Scanning and analysis tools for Cheat Engine MCP
 from typing import Optional
 from mcp.server.fastmcp import FastMCP
 
-from ..client import make_request
-from ..models import (
+from client import make_request
+from models import (
     AobScanResponse,
     ConversionResponse,
     DisassemblerResponse,

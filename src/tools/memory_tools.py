@@ -5,8 +5,8 @@ Memory read/write tools for Cheat Engine MCP
 from typing import List
 from mcp.server.fastmcp import FastMCP
 
-from ..client import make_request
-from ..models import BaseResponse, MemoryReadResponse
+from client import make_request
+from models import BaseResponse, MemoryReadResponse
 
 
 def register_memory_tools(mcp: FastMCP):
