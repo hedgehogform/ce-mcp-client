@@ -13,6 +13,9 @@ from models import (
     MemScanResponse,
 )
 
+# Global variable to store full scan results for pagination
+_cached_scan_results = None
+
 
 def register_scan_tools(mcp: FastMCP):
     """Register all scanning and analysis tools with the MCP server"""
@@ -129,10 +132,12 @@ def register_scan_tools(mcp: FastMCP):
                            stop_address: int = 0x00007fffffffffff, protection_flags: str = "+W-C",
                            alignment_type: str = "fsmAligned", alignment_param: str = "4",
                            is_hexadecimal: bool = False, is_not_binary_string: bool = False,
-                           is_unicode: bool = False, is_case_sensitive: bool = False) -> MemScanResponse:
+                           is_unicode: bool = False, is_case_sensitive: bool = False,
+                           max_results: int = 100) -> MemScanResponse:
         """
         Perform a first memory scan to search for values in the target process
         This function blocks and waits until the scan is complete before returning.
+        Results are automatically paginated to prevent exceeding token limits.
         
         Args:
             scan_option: Type of scan (soUnknownValue, soExactValue, soValueBetween, soBiggerThan, soSmallerThan)
@@ -149,10 +154,14 @@ def register_scan_tools(mcp: FastMCP):
             is_not_binary_string: Whether to handle binary as decimal instead of binary string
             is_unicode: Whether to use Unicode (UTF-16) for string scans
             is_case_sensitive: Whether string comparison is case sensitive
+            max_results: Maximum number of results to return (default: 100, max: 500)
             
         Returns:
-            Dictionary with scan results after completion
+            Dictionary with scan results after completion (paginated to prevent token limit)
         """
+        # Cap max_results to prevent token overflow (estimated ~50 chars per result)
+        max_results = min(max_results, 500)
+        
         data = {
             "ScanOption": scan_option,
             "VarType": var_type,
@@ -173,7 +182,31 @@ def register_scan_tools(mcp: FastMCP):
         if input2 is not None:
             data["Input2"] = input2
             
-        return await make_request("memscan", "POST", data)
+        # Get full response from C# API
+        response = await make_request("memscan", "POST", data)
+        
+        # If scan failed or no results, return as-is
+        if not response.get("Success", False) or not response.get("Results"):
+            return response
+        
+        # Cache the full results globally for pagination
+        global _cached_scan_results
+        _cached_scan_results = response["Results"]
+            
+        # Paginate results to prevent token overflow
+        results = response["Results"]
+        if results and "Items" in results:
+            original_count = len(results["Items"])
+            total_count = results.get("TotalCount", original_count)
+            
+            # Limit items if needed for token management
+            if original_count > max_results:
+                results["Items"] = results["Items"][:max_results]
+                results["StoredCount"] = max_results
+            else:
+                results["StoredCount"] = original_count
+        
+        return response
 
     @mcp.tool()
     async def memscan_reset() -> MemScanResponse:
@@ -186,4 +219,59 @@ def register_scan_tools(mcp: FastMCP):
         Returns:
             Dictionary with success status
         """
+        global _cached_scan_results
+        _cached_scan_results = None
         return await make_request("memscan-reset", "POST")
+
+    @mcp.tool()
+    async def memscan_get_more_results(start_index: int = 0, count: int = 100) -> MemScanResponse:
+        """
+        Get additional results from the last memory scan with pagination
+        
+        This allows you to retrieve more results beyond the initial paginated response.
+        Use this when the initial scan was truncated and you need to see more results.
+        
+        Args:
+            start_index: Starting index of results to retrieve (0-based)
+            count: Number of results to retrieve (max: 500)
+            
+        Returns:
+            Dictionary with additional scan results
+        """
+        global _cached_scan_results
+        
+        if _cached_scan_results is None:
+            return {"Success": False, "Error": "No cached scan results. Run a scan first.", "Results": None}
+        
+        if "Items" not in _cached_scan_results:
+            return {"Success": True, "Results": None}
+        
+        # Cap count to prevent token overflow
+        count = min(count, 500)
+        
+        all_items = _cached_scan_results["Items"]
+        total_count = _cached_scan_results.get("TotalCount", len(all_items))
+        
+        # Validate start_index
+        if start_index >= len(all_items):
+            return {
+                "Success": True, 
+                "Results": {
+                    "TotalCount": total_count,
+                    "StoredCount": 0,
+                    "Items": []
+                }
+            }
+        
+        # Get the requested slice
+        end_index = min(start_index + count, len(all_items))
+        paginated_items = all_items[start_index:end_index]
+        
+        return {
+            "Success": True,
+            "Results": {
+                "TotalCount": total_count,
+                "StoredCount": len(paginated_items),
+                "Items": paginated_items
+            }
+        }
