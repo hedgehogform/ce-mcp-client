@@ -1,4 +1,6 @@
 # Cheat Engine MCP Client
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fhedgehogform%2Fce-mcp-client.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fhedgehogform%2Fce-mcp-client?ref=badge_shield)
+
 
 Python FastMCP server that provides AI tools for interacting with Cheat Engine through the REST API. This client allows AI assistants like Claude to perform memory analysis, process management, and reverse engineering tasks using Cheat Engine's powerful debugging capabilities.
 
@@ -138,3 +140,7 @@ src/
     ├── scan_tools.py            # Scanning and disassembly
     └── utility_tools.py         # API utilities and health checks
 ```
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fhedgehogform%2Fce-mcp-client.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fhedgehogform%2Fce-mcp-client?ref=badge_large)
