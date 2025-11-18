@@ -18,8 +18,18 @@ uv sync
 
 ## Usage
 
-```bash
-python -m src.cheat_engine_mcp_server
+```json
+"mcpServers": {
+    "ce-mcp": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "C:/Coding/ce-mcp/ce-mcp-client",
+        "run",
+        "src/server.py"
+      ]
+    }
+  }
 ```
 
 ## License
