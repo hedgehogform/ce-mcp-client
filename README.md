@@ -1,8 +1,10 @@
 # Cheat Engine MCP Client
 
-**⚠️ Work in Progress**
+## ⚠️ DEPRECATED
 
-Python FastMCP client that provides MCP tools for interacting with Cheat Engine through the REST API.
+**This repository is deprecated and no longer maintained.**
+
+We now use [hedgehogform/ce-mcp](https://github.com/hedgehogform/ce-mcp) with SSE (Server-Sent Events) directly. No separate API client is needed.
 
 ## Related Projects
 
